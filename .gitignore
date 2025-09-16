@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/psarc
+psarc.so
+psarc.dylib
+psarc.dll
+psarc.a
+psarc.lib
+psarc-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst

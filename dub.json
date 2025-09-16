@@ -1,0 +1,13 @@
+{
+	"authors": [
+		"lain"
+	],
+	"copyright": "Copyright © 2025, lain",
+	"description": "psarc unpacker",
+	"license": "AGPL-3.0-or-later",
+	"name": "psarc",
+	"dflags": ["-preview=bitfields"],
+	"dependencies": {
+		"squiz-box": "0.3.0"
+	}
+}
