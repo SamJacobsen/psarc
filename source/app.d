@@ -9,14 +9,24 @@ import std.digest.md : md5Of;
 
 void main(string[] args) {
 	string inpt;
+	bool list;
+
 	getopt(args,
 		std.getopt.config.required,
-		"file|f", "Input file", &inpt);
+		"file|f", "Input file", &inpt,
+		"list|l", "List files", &list);
 
 	enforce(toLower(extension(inpt)) == ".psarc", "Unexpected extension " ~ extension(inpt));
 
 	ubyte[] buffer = cast(ubyte[]) read(inpt);
 	PSARC arc = PSARC(buffer);
+
+	if(list) {
+		foreach (string name; arc.names) {
+			writeln(name);
+		}
+		return;
+	}
 
 	string arcName = baseName(stripExtension(inpt));
 
