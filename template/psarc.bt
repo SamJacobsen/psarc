@@ -1,0 +1,92 @@
+//------------------------------------------------
+//--- 010 Editor v15.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+BigEndian();
+
+//------------------------------------------------
+
+typedef ubyte uint40[5]<read=rUInt40>;
+
+string rUInt40(uint40 &r) {
+    local string str; 
+    local int64 out; 
+    local uint i;
+    for (i = 0; i != 5; ++i) {
+        out += ((uint64)r[i]) << (32 - i * 8);
+    }
+    SPrintf(str,"%Lu", out);
+    return str;
+}
+
+uint t(uint40 &r) {
+    local uint out; local uint i;
+    for (i = 0; i != 5; ++i) {
+        out += ((uint)r[i]) << (32 - i * 8);
+    }
+    return out;
+}
+
+typedef struct {
+    ushort major;
+    ushort minor;
+} Version <read=ReadVersion>;
+
+string ReadVersion(Version& v) {
+    string str;
+    SPrintf(str, "v%u.%u", v.major, v.minor);
+    return str;
+}
+
+typedef enum<uint> {
+    relative_paths=0,
+    ignorecase_paths=1,
+    absolute_paths=2
+} archiveFlag <edit=flags>;
+
+typedef struct {
+    ubyte nameDigest_MD5[16];
+    uint blockIndex;
+    uint40 uncompressedSize;
+    uint40 fileOffset;
+} TocTable <size=30, bgcolor=cLtBlue>;
+
+typedef struct (uint size){
+    ubyte Data[size];
+} File;
+
+typedef struct {
+    char magic[4]; Assert(magic == "PSAR");
+    Version version;
+    char compressionType[4];
+    uint tocLength;
+    uint tocEntrySize;
+    uint tocEntryCount;
+    uint blockSize;
+    archiveFlag flags;
+    
+    /*local uint i = 0;
+    for ( i = 0; i < tocEntryCount; i++)
+    {
+        if(tocTable[i].blockIndex == 9) {
+            Printf("%Ld", i);
+        }
+    }*/
+} Header <bgcolor=cLtGreen>;
+
+//------------------------------------------------
+Header header;
+TocTable tocTable[header.tocEntryCount];
+
+local long tocLen = 32 + (header.tocEntrySize * header.tocEntryCount);
+local long blockSizeCount = (header.tocLength - tocLen) / 2;
+ushort blockSizeList[blockSizeCount] <bgcolor=cYellow>;
